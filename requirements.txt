@@ -1,3 +1,5 @@
 torch
 transformers
 numpy
+diffusers
+accelerate
