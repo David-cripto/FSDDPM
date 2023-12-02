@@ -21,7 +21,7 @@ TRANSFORM = transforms.Compose(
     [
         transforms.ToTensor(),
         random_color,
-        transforms.Lambda(lambda t: (t * 2) - 1),
+        transforms.Normalize([0.5], [0.5]),
     ]
 )
 
