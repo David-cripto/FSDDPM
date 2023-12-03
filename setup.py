@@ -13,6 +13,6 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/David-cripto/FSDDPM',
     packages=find_packages(include=('FSDDPM',)),
-    python_requires='>=3.11',
+    python_requires='>=3.10',
     install_requires=requirements,
 )
