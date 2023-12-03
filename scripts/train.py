@@ -3,7 +3,7 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from fsddpm.datasets.colored_mnist import get_dataset
 import torch
-import tqdm
+from tqdm import trange
 from fsddpm.methods.EI.train import loss_fn, VPSDE
 
 TIME_EMB_TYPE = "fourier"
@@ -26,7 +26,7 @@ def main():
     data_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
 
 
-    tqdm_epoch = tqdm.notebook.trange(N_EPOCHS)
+    tqdm_epoch = trange(N_EPOCHS)
     for epoch in tqdm_epoch:
         avg_loss = 0.
         num_items = 0
