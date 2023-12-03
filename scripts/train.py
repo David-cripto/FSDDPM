@@ -11,11 +11,11 @@ DEVICE = "cpu"
 
 LR = 1e-4
 N_EPOCHS = 50
-
+IMG_SIZE = 28
 BATCH_SIZE = 32
 
 def main():
-    model = get_model(time_embedding_type = TIME_EMB_TYPE)
+    model = get_model(img_size = IMG_SIZE, time_embedding_type = TIME_EMB_TYPE)
     model.to(DEVICE)
     model.train()
     sde = VPSDE()
@@ -24,7 +24,6 @@ def main():
 
     train_dataset, _ = get_dataset("./")
     data_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
-
 
     tqdm_epoch = trange(N_EPOCHS)
     for epoch in tqdm_epoch:
