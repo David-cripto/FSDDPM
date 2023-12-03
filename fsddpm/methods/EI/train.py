@@ -115,7 +115,7 @@ class VPSDE(SDE):
         beta_max: value of beta(1)
         N: number of discretization steps
         """
-        super().__init__()
+        super().__init__(N)
         self.beta_0 = beta_min
         self.beta_1 = beta_max
         self.N = N
