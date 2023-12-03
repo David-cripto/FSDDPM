@@ -15,7 +15,7 @@ IMG_SIZE = 28
 BATCH_SIZE = 32
 
 def main():
-    model = get_model(img_size = IMG_SIZE, time_embedding_type = TIME_EMB_TYPE)
+    model = get_model(sample_size = IMG_SIZE, time_embedding_type = TIME_EMB_TYPE)
     model.to(DEVICE)
     model.train()
     sde = VPSDE()
