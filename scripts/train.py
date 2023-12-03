@@ -7,7 +7,7 @@ from tqdm import trange
 from fsddpm.methods.EI.train import loss_fn, VPSDE
 
 TIME_EMB_TYPE = "fourier"
-DEVICE = "cpu"
+DEVICE = "cuda"
 
 LR = 1e-4
 N_EPOCHS = 50
