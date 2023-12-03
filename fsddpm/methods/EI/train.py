@@ -175,7 +175,7 @@ def loss_fn(sde, model, x, eps=1e-5):
     z = torch.randn_like(x)
     mean, std = sde.marginal_prob(x, random_t)
     perturbed_x = mean + z * std[:, None, None, None]
-    score = model(perturbed_x, random_t)
+    score = model(perturbed_x, random_t)["sample"]
     loss = torch.mean(torch.sum((score * std[:, None, None, None] + z)**2, dim=(1,2,3)))
     return loss
 
