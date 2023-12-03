@@ -22,8 +22,8 @@ def main():
 
     optimizer = Adam(model.parameters(), lr=LR)
 
-    dataset = get_dataset("./")
-    data_loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+    train_dataset, _ = get_dataset("./")
+    data_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
 
 
     tqdm_epoch = tqdm.notebook.trange(N_EPOCHS)
