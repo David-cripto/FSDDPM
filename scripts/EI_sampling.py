@@ -32,7 +32,7 @@ def main():
         ts_order=ts_order, 
         num_step=num_step, 
         ab_order=ab_order, 
-        noise=torch.randn(B, C, H, W)
+        noise=torch.randn(B, C, H, W).to(DEVICE)
     )
 
 if __name__ == '__main__':
