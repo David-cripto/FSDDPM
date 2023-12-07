@@ -7,7 +7,7 @@ vpsde = VPSDE()
 ts_order = 2.0
 num_step=10
 ab_order=3
-B, C, H, W = 1, 1, 28, 28
+B, C, H, W = 1, 3, 28, 28
 TIME_EMB_TYPE = "fourier"
 
 model = get_model(sample_size = H, time_embedding_type = TIME_EMB_TYPE)
