@@ -81,9 +81,11 @@ def get_ab_eps_coef(sde, highest_order, timesteps, order):
 
 def ab_step(x, ei_coef, new_eps, eps_pred):
     x_coef, eps_coef = ei_coef[0], ei_coef[1:]
-    full_eps = jnp.concatenate([new_eps[None], eps_pred])
-    eps_term = jnp.einsum("i,i...->...", eps_coef, full_eps)
-    return x_coef * x + eps_term, full_eps[:-1]
+    full_eps_pred = [new_eps, *eps_pred]
+    rtn = x_coef * x
+    for cur_coef, cur_eps in zip(eps_coef, full_eps_pred):
+        rtn += cur_coef * cur_eps
+    return rtn, full_eps_pred[:-1]
 
 
 def get_rev_ts(exp_sde, num_step, ts_order):
@@ -123,12 +125,12 @@ def sample(sde, eps_fn, ts_order, num_step, ab_order, noise):
     ab_coef = jnp.concatenate([x_coef[:, None], eps_coef], axis=1)
     rev_ts, ab_coef = jax2th(rev_ts), jax2th(ab_coef)
     rev_ts, ab_coef = rev_ts.to(noise.device), ab_coef.to(noise.device)
-
+    
     def ab_body_fn(i, val):
         x, eps_pred = val
         s_t= rev_ts[i]
         
-        new_eps = eps_fn(x, s_t)
+        new_eps = eps_fn(x, s_t)["sample"]
         new_x, new_eps_pred = ab_step(x, ab_coef[i], new_eps, eps_pred)
         return new_x, new_eps_pred
 
