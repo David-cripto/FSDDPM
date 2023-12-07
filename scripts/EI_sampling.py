@@ -2,6 +2,7 @@ from fsddpm.methods.EI.sampling import sample
 from fsddpm.methods.EI.train import VPSDE
 from fsddpm.methods.model import get_model
 import torch
+import jax.numpy as jnp
 
 vpsde = VPSDE()
 ts_order = 2.0
@@ -21,7 +22,7 @@ def main():
             ts_order=ts_order, 
             num_step=num_step, 
             ab_order=ab_order, 
-            noise= torch.randn(B, C, H, W)
+            noise=jnp.asarray(torch.randn(B, C, H, W))
         )
 
 if __name__ == '__main__':
