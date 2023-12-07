@@ -9,12 +9,15 @@ num_step=10
 ab_order=3
 B, C, H, W = 1, 3, 28, 28
 TIME_EMB_TYPE = "fourier"
+DEVICE = "cuda"
 
 model = get_model(sample_size = H, time_embedding_type = TIME_EMB_TYPE)
+model.load_state_dict("ckpt.pth")
+model.to(DEVICE)
 def eps_fn(x_t, scalar_t):
     vec_t = (torch.ones(x_t.shape[0])).float().to(x_t) * scalar_t
     with torch.no_grad():
-        score = model(x_t, vec_t)
+        score = model(x_t, vec_t)["sample"]
     std = vpsde.marginal_prob(torch.zeros_like(score), vec_t)[1]
     eps = - score / std[:, None, None, None]
     return eps
