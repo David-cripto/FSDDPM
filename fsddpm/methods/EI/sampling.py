@@ -1,5 +1,7 @@
 import jax
 import jax.numpy as jnp
+import numpy as np
+import torch
 
 def get_integrator_basis_fn(sde):
     def _worker(t_start, t_end, num_item):
@@ -97,13 +99,30 @@ def get_rev_ts(exp_sde, num_step, ts_order):
     )
     return rev_ts
 
+def jax2th(array, th_array=None):
+    if th_array is None:
+        return torch.from_numpy(
+            np.asarray(array).copy()
+        )
+    else:
+        return torch.from_numpy(
+            np.asarray(array).copy()
+        ).to(th_array.device)
+
+def fori_loop(lower, upper, body_fun, init_val):
+    val = init_val
+    for i in range(lower, upper):
+        val = body_fun(i, val)
+    return val
+
 def sample(sde, eps_fn, ts_order, num_step, ab_order, noise):
     rev_ts = get_rev_ts(sde, num_step, ts_order)
     
     x_coef = sde.psi(rev_ts[:-1], rev_ts[1:])
     eps_coef = get_ab_eps_coef(sde, ab_order, rev_ts, ab_order)
     ab_coef = jnp.concatenate([x_coef[:, None], eps_coef], axis=1)
-
+    rev_ts, ab_coef = jax2th(rev_ts), jax2th(ab_coef)
+    rev_ts, ab_coef = rev_ts.to(noise.device), ab_coef.to(noise.device)
 
     def ab_body_fn(i, val):
         x, eps_pred = val
@@ -114,6 +133,6 @@ def sample(sde, eps_fn, ts_order, num_step, ab_order, noise):
         return new_x, new_eps_pred
 
 
-    eps_pred = jnp.asarray([noise,] * ab_order)
-    img, _ = jax.lax.fori_loop(0, num_step, ab_body_fn, (noise, eps_pred))
+    eps_pred = [noise,] * ab_order
+    img, _ = fori_loop(0, num_step, ab_body_fn, (noise, eps_pred))
     return img
