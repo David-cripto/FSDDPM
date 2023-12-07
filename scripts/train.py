@@ -37,9 +37,7 @@ def main():
             optimizer.step()
             avg_loss += loss.item() * x.shape[0]
             num_items += x.shape[0]
-        # Print the averaged training loss so far.
         tqdm_epoch.set_description('Average Loss: {:5f}'.format(avg_loss / num_items))
-        # Update the checkpoint after each epoch of training.
         torch.save(model.state_dict(), 'ckpt.pth')
 
 

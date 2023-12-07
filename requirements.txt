@@ -4,3 +4,4 @@ numpy
 diffusers
 accelerate
 tqdm
+jax
