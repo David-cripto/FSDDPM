@@ -97,7 +97,7 @@ def get_rev_ts(exp_sde, num_step, ts_order):
     )
     return rev_ts
 
-def sample(sde, eps_fn, ts_order, num_step, ab_order, x0):
+def sample(sde, eps_fn, ts_order, num_step, ab_order, noise):
     rev_ts = get_rev_ts(sde, num_step, ts_order)
     
     x_coef = sde.psi(rev_ts[:-1], rev_ts[1:])
@@ -114,6 +114,6 @@ def sample(sde, eps_fn, ts_order, num_step, ab_order, x0):
         return new_x, new_eps_pred
 
 
-    eps_pred = jnp.asarray([x0,] * ab_order)
-    img, _ = jax.lax.fori_loop(0, num_step, ab_body_fn, (x0, eps_pred))
+    eps_pred = jnp.asarray([noise,] * ab_order)
+    img, _ = jax.lax.fori_loop(0, num_step, ab_body_fn, (noise, eps_pred))
     return img
