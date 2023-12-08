@@ -14,6 +14,8 @@ DEVICE = "cuda"
 model = get_model(sample_size = H, time_embedding_type = TIME_EMB_TYPE)
 model.load_state_dict(torch.load("ckpt.pth"))
 model.to(DEVICE)
+model.eval()
+
 def eps_fn(x_t, scalar_t):
     vec_t = (torch.ones(x_t.shape[0])).float().to(x_t) * scalar_t
     with torch.no_grad():

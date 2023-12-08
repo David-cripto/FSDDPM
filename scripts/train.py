@@ -10,9 +10,9 @@ TIME_EMB_TYPE = "fourier"
 DEVICE = "cuda"
 
 LR = 1e-4
-N_EPOCHS = 50
+N_EPOCHS = 10**3
 IMG_SIZE = 28
-BATCH_SIZE = 32
+BATCH_SIZE = 128
 
 def main():
     model = get_model(sample_size = IMG_SIZE, time_embedding_type = TIME_EMB_TYPE)
@@ -24,6 +24,7 @@ def main():
 
     train_dataset, _ = get_dataset("./")
     data_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+    loss_history = []
 
     tqdm_epoch = trange(N_EPOCHS)
     for epoch in tqdm_epoch:
@@ -37,8 +38,16 @@ def main():
             optimizer.step()
             avg_loss += loss.item() * x.shape[0]
             num_items += x.shape[0]
+        loss_history.append(avg_loss / num_items)
         tqdm_epoch.set_description('Average Loss: {:5f}'.format(avg_loss / num_items))
-        torch.save(model.state_dict(), 'ckpt.pth')
+        torch.save({
+            'epoch': epoch,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'train_loss_history': loss_history,
+            }, 
+            'ckpt.pth'
+            )
 
 
 if __name__ == '__main__':
