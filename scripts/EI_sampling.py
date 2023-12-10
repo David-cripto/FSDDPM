@@ -19,9 +19,7 @@ model.eval()
 def eps_fn(x_t, scalar_t):
     vec_t = (torch.ones(x_t.shape[0])).float().to(x_t) * scalar_t
     with torch.no_grad():
-        score = model(x_t, vec_t)["sample"]
-    std = vpsde.marginal_prob(torch.zeros_like(score), vec_t)[1]
-    eps = - score / std[:, None, None, None]
+        eps = model(x_t, vec_t)["sample"]
     return eps
 
 
