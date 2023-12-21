@@ -5,3 +5,5 @@ diffusers
 accelerate
 tqdm
 jax
+pytorch-fid
+scipy==1.11.1

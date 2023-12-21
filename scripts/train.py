@@ -5,11 +5,12 @@ from fsddpm.datasets.colored_mnist import get_dataset
 import torch
 from tqdm import trange
 from fsddpm.methods.EI.train import loss_fn, VPSDE
+from diffusers.optimization import get_scheduler
 
 TIME_EMB_TYPE = "fourier"
 DEVICE = "cuda"
 
-LR = 1e-4
+LR = 4e-4
 N_EPOCHS = 10**3
 IMG_SIZE = 28
 BATCH_SIZE = 128
@@ -23,8 +24,15 @@ def main():
     optimizer = Adam(model.parameters(), lr=LR)
 
     train_dataset, _ = get_dataset("./")
-    data_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
+    data_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     loss_history = []
+
+    lr_scheduler = get_scheduler(
+        'constant_with_warmup',
+        optimizer=optimizer,
+        num_warmup_steps=1*len(data_loader),
+        num_training_steps=N_EPOCHS*len(data_loader),
+    )
 
     tqdm_epoch = trange(N_EPOCHS)
     for epoch in tqdm_epoch:
@@ -33,9 +41,10 @@ def main():
         for x, y in data_loader:
             x = x.to(DEVICE)    
             loss = loss_fn(sde, model, x)
-            optimizer.zero_grad()
             loss.backward()    
             optimizer.step()
+            lr_scheduler.step()
+            optimizer.zero_grad()
             avg_loss += loss.item() * x.shape[0]
             num_items += x.shape[0]
         loss_history.append(avg_loss / num_items)

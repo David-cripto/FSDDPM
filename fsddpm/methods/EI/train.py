@@ -1,7 +1,9 @@
 import torch
-import numpy as np
 import jax
 import jax.numpy as jnp
+from torch import nn
+
+criterion = nn.MSELoss()
 
 class VPSDE():
     def __init__(self, beta_min=0.1, beta_max=20):
@@ -44,6 +46,6 @@ def loss_fn(sde, model, x, eps=1e-5):
     mean, std = sde.marginal_prob(x, random_t)
     perturbed_x = mean + z * std[:, None, None, None]
     pred_noise = model(perturbed_x, random_t)["sample"]
-    loss = torch.mean(torch.sum((pred_noise  - z)**2, dim=(1,2,3)))
+    loss = criterion(pred_noise, z)
     return loss
 
